@@ -1,0 +1,188 @@
+# .github/workflows/job_deploy.yaml
+name: Job-Deploy Resources
+
+on:
+    workflow_call:
+        inputs:
+            project:
+                description: "Project name"
+                required: true
+                type: string
+            env:
+                description: "Environment"
+                required: true
+                type: string
+            aws_region:
+                description: "AWS region"
+                type: string
+                default: "ca-central-1"
+        secrets:
+            db_name:
+                description: "Database name"
+            db_username:
+                description: "Database username"
+            db_password:
+                description: "Database password"
+            db_app_pwd:
+                description: "App user password"
+            db_readonly_pwd:
+                description: "Readonly user password"
+            cf_api_token:
+                description: "Cloudflare API token"
+            cf_zone_id:
+                description: "Cloudflare zone id"
+            aws_tf_role_arn:
+                description: "AWS role for tf"
+            aws_backend_bucket:
+                description: "AWS bucket for tf remote backend"
+        outputs:
+            base_url:
+                description: "A description of the output"
+                value: ${{ jobs.deploy.outputs.base_url }}
+jobs:
+    deploy:
+        name: Deploy ${{ inputs.env }}
+        runs-on: ubuntu-latest
+        timeout-minutes: 60
+        env:
+            TF_VERSION: 1.14.0
+            TF_DIR: aws/${{ inputs.env }}
+            TF_PLUGIN_CACHE_DIR: /home/runner/.terraform.d/plugin-cache
+            TF_VAR_aws_region: ${{ inputs.AWS_REGION }}
+            TF_VAR_env: ${{ inputs.ENV }}
+            TF_VAR_db_name: ${{ secrets.db_name }}
+            TF_VAR_db_username: ${{ secrets.db_username }}
+            TF_VAR_db_password: ${{ secrets.db_password }}
+            TF_VAR_db_app_pwd: ${{ secrets.db_app_pwd }}
+            TF_VAR_db_readonly_pwd: ${{ secrets.db_readonly_pwd }}
+            TF_VAR_cloudflare_api_token: ${{ secrets.cf_api_token }}
+            TF_VAR_cloudflare_zone_id: ${{ secrets.cf_zone_id }}
+        outputs:
+            base_url: ${{ steps.output_base_url.outputs.base_url }}
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+
+            - name: Setup Terraform
+              uses: hashicorp/setup-terraform@v3
+              with:
+                  terraform_version: ${{ env.TF_VERSION }}
+
+            - name: Configure AWS credentials (OIDC)
+              uses: aws-actions/configure-aws-credentials@v4
+              with:
+                  role-to-assume: ${{ secrets.aws_tf_role_arn}}
+                  aws-region: ${{ inputs.aws_region }}
+
+            - name: Configure Terraform plugin cache
+              run: |
+                  mkdir -pv ${{ env.TF_PLUGIN_CACHE_DIR }}
+                  echo 'plugin_cache_dir = "${{ env.TF_PLUGIN_CACHE_DIR }}"' > ~/.terraformrc
+
+            - name: Cache Terraform plugins
+              uses: actions/cache@v4
+              with:
+                  path: ${{ env.TF_PLUGIN_CACHE_DIR }}
+                  key: ${{ runner.os }}-terraform-${{ env.TF_VERSION }}-${{ inputs.env }}-${{ hashFiles('aws/.terraform.lock.hcl') }}
+
+            - name: Terraform init - S3 backend
+              working-directory: ${{ env.TF_DIR }}
+              run: |
+                  terraform init -reconfigure -input=false \
+                    -backend-config="bucket=${{ secrets.AWS_BACKEND_BUCKET }}" \
+                    -backend-config="region=${{ inputs.AWS_REGION }}" \
+                    -backend-config="key=${{ inputs.project }}/${{ inputs.ENV }}/terraform.tfstate" \
+                    -backend-config="encrypt=true"
+
+            - name: Terraform Validate
+              working-directory: ${{ env.TF_DIR }}
+              run: |
+                  terraform fmt -check -recursive -no-color
+                  terraform validate -no-color
+
+            - name: Deploy - Terraform Plan
+              working-directory: ${{ env.TF_DIR }}
+              id: deploy-plan
+              run: terraform plan -out=tfplan -input=false -no-color
+
+            - name: Deploy - Show plan (JSON)
+              working-directory: ${{ env.TF_DIR }}
+              run: terraform show -json tfplan > tfplan.json
+
+            - name: Deploy - Save plan artifacts
+              uses: actions/upload-artifact@v4
+              with:
+                  name: "tfplan-deploy-${{ env.TF_VAR_env }}"
+                  path: |
+                      ${{ env.TF_DIR }}/tfplan
+                      ${{ env.TF_DIR }}/tfplan.json
+                  overwrite: true
+                  retention-days: 3
+
+            - name: Deploy - Terraform Apply
+              working-directory: ${{ env.TF_DIR }}
+              run: terraform apply -auto-approve -no-color tfplan
+
+            - name: Initial RDS
+              working-directory: ${{ env.TF_DIR }}
+              env:
+                  AWS_REGION: ${{ inputs.AWS_REGION }}
+              run: |
+                  set -euo pipefail
+
+                  echo "Get output ...."
+                  CLUSTER="$(terraform output -raw ecs_cluster_name)"
+                  FLYWAY_RUN_COMMAND="$(terraform output -raw flyway_init_cmd)"
+                  REGION="${{ inputs.AWS_REGION }}"
+
+                  echo "ECS Cluster: $CLUSTER"
+                  echo "Starting Flyway task using: $FLYWAY_RUN_COMMAND"
+
+                  echo "Arn ...."
+                  TASK_ARN=$(eval "$FLYWAY_RUN_COMMAND" | jq -r '.tasks[0].taskArn' | tr -d '[:space:]')
+                  echo $TASK_ARN
+
+                  echo "Waiting for Flyway task to finish..."
+                  aws ecs wait tasks-stopped \
+                    --cluster "$CLUSTER" \
+                    --tasks "$TASK_ARN" \
+                    --region "$REGION"
+
+                  echo "Flyway migration task completed successfully."
+
+            - name: Initial Kafka
+              if: ${{ env.TF_VAR_env == 'kafka' }}
+              working-directory: ${{ env.TF_DIR }}
+              env:
+                  AWS_REGION: ${{ inputs.AWS_REGION }}
+              run: |
+                  set -euo pipefail
+
+                  echo "Get output ...."
+                  CLUSTER="$(terraform output -raw ecs_cluster_name)"
+                  KAFKA_INIT_COMMAND="$(terraform output -raw kafka_init_cmd)"
+                  REGION="${{ inputs.AWS_REGION }}"
+
+                  echo "ECS Cluster: $CLUSTER"
+                  echo "Starting Flyway task using: $KAFKA_INIT_COMMAND"
+
+                  echo "Arn ...."
+                  TASK_ARN=$(eval "$KAFKA_INIT_COMMAND" | jq -r '.tasks[0].taskArn' | tr -d '[:space:]')
+                  echo $TASK_ARN
+
+                  echo "Waiting for Kafka init task to finish..."
+                  aws ecs wait tasks-stopped \
+                    --cluster "$CLUSTER" \
+                    --tasks "$TASK_ARN" \
+                    --region "$REGION"
+
+                  echo "Kafka initialization task completed successfully."
+
+            - name: Output
+              id: output_base_url
+              working-directory: ${{ env.TF_DIR }}
+              run: |
+                  BASE_URL="$(terraform output -raw dns_url)"
+                  echo "$BASE_URL"
+                  echo "base_url=$BASE_URL" >> "$GITHUB_OUTPUT"
+                  echo "base_url={${{ inputs.env }}:$BASE_URL}" >> "$GITHUB_OUTPUT"

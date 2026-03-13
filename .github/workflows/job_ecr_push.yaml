@@ -1,0 +1,97 @@
+# .github/workflows/job_ecr_push.yaml
+name: Job-ECR Push
+
+on:
+  workflow_call:
+    inputs:
+      image_name:
+        description: "Image Name"
+        required: true
+        type: string
+      ecr_repo:
+        description: "ECR repo"
+        type: string
+        required: true
+      image_tag:
+        description: "Image tag"
+        type: string
+      dir_dockerfile:
+        description: "Path of the Dockerfile"
+        type: string
+        required: true
+      aws_region:
+        description: "AWS Region"
+        type: string
+        default: "ca-central-1"
+    secrets:
+      aws_tf_role_arn:
+        description: "AWS ARN - TF role"
+        required: true
+      # aws_account_id:
+      #   description: "AWS Account ID"
+      #   required: true
+
+jobs:
+  ecr-push:
+    name: ECR Push(${{ inputs.image_name }})
+    runs-on: ubuntu-latest
+    env:
+      DIR_DOCKFILE: ${{ inputs.dir_dockerfile }}
+      AWS_REGION: ${{ inputs.aws_region }}
+      ECR_REPOSITORY: ${{ inputs.ecr_repo }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.aws_tf_role_arn }}
+          aws-region: ${{ inputs.aws_region }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.ECR_REPOSITORY }}
+
+      - name: Build and push Docker image
+        id: build-push
+        uses: docker/build-push-action@v3
+        with:
+          push: true
+          context: ${{ env.DIR_DOCKFILE }}
+          labels: ${{ steps.meta.outputs.labels }}
+          tags: |
+            ${{ env.ECR_REPOSITORY }}:${{inputs.image_tag}}
+
+      # - name: Send email notification (on failure)
+      #   if: failure()
+      #   uses: dawidd6/action-send-mail@v3
+      #   with:
+      #     server_address: smtp.gmail.com
+      #     server_port: 465
+      #     secure: true
+      #     username: ${{ secrets.EMAIL_USERNAME }}
+      #     password: ${{ secrets.EMAIL_PASSWORD }}
+      #     subject: "${{ job.status }} - ${{ github.workflow }}: ${{ vars.PROJECT }} ${{ matrix.service.name }} (${{ vars.ENV }})"
+      #     to: ${{ secrets.EMAIL_USERNAME }}
+      #     from: ${{ secrets.EMAIL_USERNAME }}
+      #     html_body: |
+      #       <h2>GitHub Actions CI/CD Notification</h2>
+      #       <p><b>Project</b>: ${{ vars.PROJECT }} (service: ${{ matrix.service.name }})</p>
+      #       <p><b>Repository</b>: ${{ github.repository }}</p>
+      #       <p><b>Env</b>: ${{ vars.ENV }}</p>
+      #       <p><b>Job</b>: ${{ github.job }}</p>
+      #       <p><b>Status</b>: ${{ job.status }}</p>
+      #       <p><b>Branch</b>: ${{ github.ref }}</p>
+      #       <p><b>Workflow</b>: ${{ github.workflow }}</p>
+      #       <p><b>Commit</b>: ${{ github.sha }}</p>
+      #       <p><a href="https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}">View Workflow Run</a></p>

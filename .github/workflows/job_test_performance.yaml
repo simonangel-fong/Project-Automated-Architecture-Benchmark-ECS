@@ -1,0 +1,59 @@
+# .github/workflows/job_test_performance.yaml
+name: Job-Performance Testing Read
+
+on:
+  workflow_call:
+    inputs:
+      base_url:
+        description: "The base url"
+        required: true
+        type: string
+      env:
+        description: "Environment"
+        required: true
+        type: string
+      test_report:
+        description: "Report name"
+        required: true
+        type: string
+      test_script:
+        description: "Testing script"
+        required: true
+        type: string
+jobs:
+  testing-performance:
+    name: Performance Testing ${{ inputs.env }}
+    runs-on: ubuntu-latest
+    env:
+      ENV: ${{ inputs.env }}
+      BASE_URL: ${{ inputs.base_url }}
+      K6_REPORT: k6/report/${{ inputs.test_report }}
+      K6_SCRIPT: k6/script/${{ inputs.test_script }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup K6
+        uses: grafana/setup-k6-action@v1
+
+      - name: Performance Testing ${{ inputs.env }}
+        id: testing-performance
+        uses: grafana/run-k6-action@v1
+        env:
+          K6_WEB_DASHBOARD: "true"
+          K6_WEB_DASHBOARD_EXPORT: "${{ env.K6_REPORT }}"
+        with:
+          debug: true
+          fail-fast: true
+          flags: --env BASE_URL=${{env.BASE_URL}}
+          path: |
+            ${{ env.K6_SCRIPT }}
+
+      - name: Upload performance report artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: "k6-report-${{ inputs.test_report }}"
+          path: |
+            ${{ env.K6_REPORT }}
+          retention-days: 7

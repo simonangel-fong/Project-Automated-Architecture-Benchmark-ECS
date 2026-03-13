@@ -1,0 +1,58 @@
+[
+  {
+    "name": "fastapi",
+    "image": "${image}",
+
+    "cpu": ${cpu},
+    "memory": ${memory},
+    "essential": true,
+
+    "environment": [
+      { "name": "APP_NAME", "value": "${project}" },
+      { "name": "ENV", "value": "${env}" },
+      { "name": "DEBUG", "value": "${debug}" },
+      { "name": "LOG_LEVEL", "value": "${log_level}" },
+      { "name": "POSTGRES__HOST", "value": "${pgdb_host}" },
+      { "name": "POSTGRES__PORT", "value": "5432" },
+      { "name": "POSTGRES__DB", "value": "${pgdb_db}" },
+      { "name": "POSTGRES__USER", "value": "${pgdb_user}" },
+      { "name": "POSTGRES__PASSWORD", "value": "${pgdb_pwd}" },
+      { "name": "POOL_SIZE", "value": "${pool_size}" },
+      { "name": "MAX_OVERFLOW", "value": "${max_overflow}" },
+      { "name": "WORKER", "value": "${worker}" }
+    ],
+
+    "portMappings": [
+      {
+        "name": "fastapi",
+        "containerPort": 8000,
+        "protocol": "tcp"
+      }
+    ],
+
+    "logConfiguration": {
+      "logDriver": "awslogs",
+      "options": {
+        "awslogs-create-group": "true",
+        "awslogs-group": "${awslogs_group}",
+        "awslogs-region": "${region}",
+        "awslogs-stream-prefix": "ecs",
+        "awslogs-datetime-format": "%Y-%m-%dT%H:%M:%S.%f%z"
+      }
+    },
+
+    "healthCheck": {
+      "command": [
+        "CMD-SHELL",
+        "curl -f http://127.0.0.1:8000/api/health/ || exit 1"
+      ],
+      "interval": 30,
+      "timeout": 5,
+      "retries": 3,
+      "startPeriod": 15
+    },
+
+    "stopTimeout": 30,
+    "readonlyRootFilesystem": false
+  }
+]

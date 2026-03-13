@@ -1,0 +1,78 @@
+# .github/workflows/job_lint_check.yaml
+name: Job-Terraform Lint Check
+
+on:
+  workflow_call:
+    inputs:
+      tf_project_name:
+        description: "Terraform project name"
+        required: true
+        type: string
+      tf_path:
+        description: "Terraform path"
+        required: true
+        type: string
+
+jobs:
+  terraform_lint_check:
+    name: Terraform Lint Check ${{ inputs.tf_project_name }}
+    runs-on: ubuntu-latest
+    env:
+      TF_VERSION: 1.9.8
+      TF_LINT_VERSION: v0.53.0
+      TF_PLUGIN_CACHE_DIR: /home/runner/.terraform.d/plugin-cache
+    defaults:
+      run:
+        working-directory: ${{ inputs.tf_path }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - name: Configure plugin cache dir
+        run: |
+          mkdir -pv /home/runner/.terraform.d/plugin-cache /home/runner/.tflint.d/plugins
+          echo 'plugin_cache_dir = "/home/runner/.terraform.d/plugin-cache"' > /home/runner/.terraformrc
+
+      - name: Cache Terraform plugin dir
+        uses: actions/cache@v4
+        with:
+          path: /home/runner/.terraform.d/plugin-cache
+          key: ${{ runner.os }}-terraform-${{ inputs.tf_project_name }}-${{ env.TF_VERSION }}
+
+      - name: Terraform init (no backend)
+        run: terraform init -backend=false -no-color
+
+      - name: Terraform fmt
+        run: terraform fmt -check -recursive -no-color
+
+      - name: Terraform validate
+        run: terraform validate -no-color
+
+      - name: Setup TFLint
+        uses: terraform-linters/setup-tflint@v4
+        with:
+          tflint_version: ${{env.TF_LINT_VERSION}}
+
+      - name: Cache TFLint plugins
+        uses: actions/cache@v4
+        with:
+          path: /home/runner/.tflint.d/plugins
+          key: ${{ runner.os }}-tflint-${{ inputs.tf_project_name }}-${{ hashFiles('**/.tflint.hcl') }}
+          restore-keys: |
+            ${{ runner.os }}-tflint-${{ inputs.tf_project_name }}
+
+      - name: TFLint
+        run: |
+          tflint --init
+          tflint -f compact
+
+      # - name: TFSec
+      #   uses: aquasecurity/tfsec-sarif-action@v0.1.0
+      #   with:
+      #     working_directory: aws/${{ inputs.env }}
+      #     # tfsec_args: --concise-output

@@ -1,0 +1,14 @@
+name: kafka
+
+include:
+  - compose.kafka.pgdb.yaml
+  - compose.kafka.redis.yaml
+  - compose.kafka.kafka.yaml
+  - compose.kafka.fastapi.yaml
+
+networks:
+  public_network:
+    driver: bridge
+  private_network:
+    driver: bridge
+    internal: true

@@ -1,0 +1,31 @@
+# robots.txt — block all automated crawlers
+
+# Disallow every crawler (including Googlebot, Bingbot, etc.)
+User-agent: *
+Disallow: /
+
+# Optional: allow static assets (uncomment if you want public access)
+# Allow: /static/
+# Allow: /assets/
+
+# Hint for crawlers that respect crawl delay
+Crawl-delay: 10
+
+# Explicitly deny known aggressive crawlers
+User-agent: Googlebot
+Disallow: /
+
+User-agent: Bingbot
+Disallow: /
+
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: DotBot
+Disallow: /

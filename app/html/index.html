@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Automated Architecture Benchmark </title>
+    <link rel="shortcut icon" href="./img/logo.png" type="image/x-icon">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Archivo:wght@300;400;600;700&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<!-- enable scroll spy -->
+
+<body data-bs-spy="scroll" data-bs-target=".navbar" data-bs-offset="0">
+    <!-- Navigation -->
+    <nav id="navbar" class="navbar navbar-expand-lg fixed-top" data-bs-theme="dark">
+        <div class="container">
+            <a class="navbar-brand navbar-brand-text" href="https://ecs-benchmark.arguswatcher.net/">
+                <img src="./img/logo.png" alt="" width="36" height="36">
+                Automated Architecture Benchmark
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link navbar-link-text" href="#challenge">Challenge</a></li>
+                    <li class="nav-item"><a class="nav-link navbar-link-text" href="#results">Results</a></li>
+                    <li class="nav-item"><a class="nav-link navbar-link-text" href="#architecture">Architecture</a></li>
+                    <li class="nav-item"><a class="nav-link navbar-link-text" href="#pipeline">Pipeline</a></li>
+                    <li class="nav-item"><a class="nav-link navbar-link-text" href="#capabilities">Capabilities</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main id="main">
+        <!-- Hero Section =============================== -->
+        <header id="home" class="hero">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-6 col-md-8">
+                        <h1>Automated Architecture Benchmark</h1>
+                        <p class="hero-subtitle">One Pipeline. Four Designs. Real Metrics.</p>
+                        <p class="hero-description">
+                            An <b class="text-success-accent">AWS project</b> that deploys, tests, and compares <b
+                                class="text-success-accent">four AWS architectures</b> under real traffic for
+                            <b class="text-success-accent">data-driven decisions</b>.
+                        </p>
+                        <div class="hero-buttons mt-4 d-flex flex-column flex-lg-row gap-3">
+                            <a href="#project_video" class="btn-custom-primary text-center">Project Video</a>
+                            <a href="https://github.com/simonangel-fong/Project-Automated-Architecture-Benchmark-ECS"
+                                class="btn-custom-outline text-center" target="_blank">GitHub Repository</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Business Challenge =========================== -->
+        <section id="challenge">
+            <div id="project_video" class="container">
+
+                <!-- description -->
+                <div class="row section-header">
+                    <div class="col-lg-10 col-md-12 mx-auto">
+                        <h2 class="section-title">Business Challenge</h2>
+                        <h4 class="section-subtitle" style="color:var(--color-success)">
+                            How do teams choose the right architecture as their business grows?
+                        </h4>
+                        <p>
+                            This project uses automated benchmarking to evaluate <u>performance trade-offs</u>,
+                            supporting <u>data-driven decisions</u>.
+                        </p>
+
+                    </div>
+                </div>
+
+                <!-- video -->
+                <div class="row">
+                    <div class="col-lg-10 col-md-12 mx-auto">
+                        <p>
+                            🎥 Watch a <b class="text-success-accent">2-minute</b> walkthrough 👇
+                        </p>
+                        <div class="ratio ratio-16x9 shadow rounded overflow-hidden">
+                            <video muted controls autoplay loop preload="metadata" class="w-100">
+                                <source src="./video/project_video.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- Performance Results =================== -->
+        <section id="results">
+            <div class="container">
+                <div class="row section-header">
+                    <div class="col-lg-10 col-md-12 mx-auto">
+                        <h2 class="section-title">Performance Impact</h2>
+                        <h4 class="section-subtitle">
+                            Four architectures. One automated pipeline. Here's what the data showed.
+                        </h4>
+                    </div>
+                </div>
+
+                <!-- Metric Cards -->
+                <div class="row g-4 py-5 mb-5">
+                    <!-- Throughput -->
+                    <div class="col-lg-3 col-md-6">
+                        <div class="result-card">
+                            <div class="result-metric">⏫213%</div>
+                            <div class="result-label">Throughput Improvement</div>
+                            <p class="result-description">Sustained throughput increased from <b
+                                    class="text-success-accent">320</b> to <b class="text-success-accent">1000 RPS</b>
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Failure -->
+                    <div class="col-lg-3 col-md-6">
+                        <div class="result-card">
+                            <div class="result-metric">~0%</div>
+                            <div class="result-label">Request Failures</div>
+                            <p class="result-description">
+                                Nearly eliminated failures at <b class="text-success-accent">1000 RPS</b>
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Latency -->
+                    <div class="col-lg-3 col-md-6">
+                        <div class="result-card">
+                            <div class="result-metric">⏬99%</div>
+                            <div class="result-label">Latency Reduction</div>
+                            <p class="result-description">
+                                Response time dropped from <b class="text-success-accent">3000ms</b>
+                                to <b class="text-success-accent">70ms</b>
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- cpu -->
+                    <div class="col-lg-3 col-md-6">
+                        <div class="result-card">
+                            <div class="result-metric">⏬67%</div>
+                            <div class="result-label">Database CPU Savings</div>
+                            <p class="result-description">
+                                Database load reduced from <b class="text-success-accent">48.6%</b>
+                                to <b class="text-success-accent">15.8%</b>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Comparison Table -->
+                <div class="row">
+                    <div class="col-12 mx-auto">
+                        <h3 class="subsection-title">Key Results Comparison (Read:Write = 1:1)</h3>
+                        <div class="table-responsive">
+                            <table class="table table-dark">
+                                <thead>
+                                    <tr>
+                                        <th>Architecture</th>
+                                        <th>Baseline</th>
+                                        <th>Scale</th>
+                                        <th>Redis</th>
+                                        <th>Kafka</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Failure Rate</strong></td>
+                                        <td>~34%</td>
+                                        <td>~0%</td>
+                                        <td>~0%</td>
+                                        <td>~0%</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>p95 Latency</strong></td>
+                                        <td>~3000ms</td>
+                                        <td>~70ms <b class="h6 ps-1" style="color:var(--color-success)">⏬97.67%</b></td>
+                                        <td>~75ms <b class="h6 ps-1" style="color:var(--color-success)">⏬97.50%</b></td>
+                                        <td>~25ms <b class="h6 ps-1" style="color:var(--color-success)">⏬99.17%</b>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Max RPS</strong></td>
+                                        <td>~320</td>
+                                        <td>1000 <b class="h6 ps-1" style="color:var(--color-success)">⏫213%</b></td>
+                                        <td>1000 <b class="h6 ps-1" style="color:var(--color-success)">⏫213%</b></td>
+                                        <td>1000 <b class="h6 ps-1" style="color:var(--color-success)">⏫213%</b></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Database CPU Usage</strong></td>
+                                        <td>19.2% (Backend Saturated)</td>
+                                        <td>48.6%</td>
+                                        <td>34.9% <b class="h6 ps-1" style="color:var(--color-success)">⏬28.19%</b></td>
+                                        <td>15.8% <b class="h6 ps-1" style="color:var(--color-success)">⏬67.49%</b></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Business Continuity</strong></td>
+                                        <td>❌ Low</td>
+                                        <td>🟢 High</td>
+                                        <td>🟢 High</td>
+                                        <td>🟢 Very High</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Database Overload Risk</strong></td>
+                                        <td>🔴 High</td>
+                                        <td>🟠 Medium–High</td>
+                                        <td>🟡 Medium</td>
+                                        <td>🟢 Low</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Operational Cost</strong></td>
+                                        <td>🟢 Low</td>
+                                        <td>🟠 Medium</td>
+                                        <td>🟠 Medium</td>
+                                        <td>🔴 High</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Operational Complexity</strong></td>
+                                        <td>🟢 Low</td>
+                                        <td>🟠 Medium</td>
+                                        <td>🟠 Medium</td>
+                                        <td>🔴 High</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Grafana -->
+                <div class="row mt-5">
+                    <div class="col-lg-10 col-md-12 mx-auto">
+                        <p>
+                            📈 Explore the <b class="text-success-accent">Grafana dashboard</b> 👉
+                            <a href="https://simonangelfong.grafana.net/dashboard/snapshot/vm8GHz4ne3ej2IijhAXtitw74oAXRSKr"
+                                target="_blank">Grafana Metrics Snapshot</a>
+                        </p>
+                        <p>
+                            🎥 Watch the <b class="text-success-accent">Grafana dashboard</b> in
+                            action 👇
+                        </p>
+                    </div>
+                    <div class="col-lg-10 col-md-12 col-sm-12 mx-auto">
+                        <div class="ratio ratio-16x9">
+                            <video muted controls autoplay loop preload="metadata" class="w-100">
+                                <source src="./video/grafana_metrics.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Architecture Evolution ========================== -->
+        <section id="architecture">
+
+            <div class="container">
+                <div class="row section-header">
+                    <div class="col-lg-10 col-md-12 mx-auto">
+                        <h2 class="section-title">Architecture Evolution</h2>
+                        <h4 class="section-subtitle">
+                            Four architectures were implemented and tested under identical traffic conditions, with each
+                            design adding a new optimization layer.
+                        </h4>
+                    </div>
+                </div>
+
+                <!-- slide -->
+                <div class="row mb-5">
+                    <div class="col-lg-10 col-md-12 mx-auto">
+                        <p> Swipe through <b class="text-success-accent">architecture diagrams</b> 👇 </p>
+                        <div id="slide" class="carousel slide">
+                            <div class="carousel-indicators">
+                                <button type="button" data-bs-target="#slide" data-bs-slide-to="0" class="active"
+                                    aria-current="true" aria-label="Baseline"></button>
+                                <button type="button" data-bs-target="#slide" data-bs-slide-to="1"
+                                    aria-label="Scale"></button>
+                                <button type="button" data-bs-target="#slide" data-bs-slide-to="2"
+                                    aria-label="Redis"></button>
+                                <button type="button" data-bs-target="#slide" data-bs-slide-to="3"
+                                    aria-label="Kafka"></button>
+                            </div>
+                            <div class="carousel-inner">
+                                <div class="carousel-item active">
+                                    <img src="./img/diagram/baseline.gif" class="d-block w-100" alt="baseline">
+                                    <div class="carousel-caption d-none d-md-block">
+                                        <h5>Baseline - Single Service</h5>
+                                        <!-- <p>A single pod directly connected to the database.</p> -->
+                                    </div>
+                                </div>
+                                <div class="carousel-item">
+                                    <img src="./img/diagram/scale.gif" class="d-block w-100" alt="scale">
+                                    <div class="carousel-caption d-none d-md-block">
+                                        <h5>Scale - Horizontal Scaling</h5>
+                                        <!-- <p>Multiple pods with HPA(Horizontal Pod Autoscaling) and Karpenter.</p> -->
+                                    </div>
+                                </div>
+                                <div class="carousel-item">
+                                    <img src="./img/diagram/redis.gif" class="d-block w-100" alt="redis">
+                                    <div class="carousel-caption d-none d-md-block">
+                                        <h5>Redis - Caching Layer</h5>
+                                        <!-- <p>Introduced a caching layer to reduce direct database reads
+                                            and optimize hot data access.</p> -->
+                                    </div>
+                                </div>
+                                <div class="carousel-item">
+                                    <img src="./img/diagram/kafka.gif" class="d-block w-100" alt="kafka">
+                                    <div class="carousel-caption d-none d-md-block">
+                                        <h5>Kafka - Event-Driven</h5>
+                                        <!-- <p>Integrated a message queue to decouple write operations.</p> -->
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="carousel-control-prev" type="button" data-bs-target="#slide"
+                                data-bs-slide="prev">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Previous</span>
+                            </button>
+                            <button class="carousel-control-next" type="button" data-bs-target="#slide"
+                                data-bs-slide="next">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Next</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Comparison Table -->
+                <div class="row">
+                    <div class="col-lg-10 col-md-12 mx-auto">
+                        <h3 class="subsection-title">Architecture Evolution Summary</h3>
+                        <div class="table-responsive">
+                            <table class="table table-dark">
+                                <thead>
+                                    <tr>
+                                        <th>Architecture</th>
+                                        <th>Scaling</th>
+                                        <th>Caching</th>
+                                        <th>Event Queue</th>
+                                        <th>Primary Objective</th>
+                                        <th>Trade-Off</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong style="color: var(--color-text);">Baseline</strong></td>
+                                        <td>❌</td>
+                                        <td>❌</td>
+                                        <td>❌</td>
+                                        <td>Control case</td>
+                                        <td>Simple but not scalable</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong style="color: var(--color-text);">Scale</strong></td>
+                                        <td>✅</td>
+                                        <td>❌</td>
+                                        <td>❌</td>
+                                        <td>Throughput</td>
+                                        <td>Higher cost and operational complexity</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong style="color: var(--color-text);">Redis</strong></td>
+                                        <td>✅</td>
+                                        <td>✅</td>
+                                        <td>❌</td>
+                                        <td>Read optimization</td>
+                                        <td>Cache consistency overhead</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong style="color: var(--color-text);">Kafka</strong></td>
+                                        <td>✅</td>
+                                        <td>✅</td>
+                                        <td>✅</td>
+                                        <td>Write reliability</td>
+                                        <td>Increased system complexity</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Pipeline ======================== -->
+        <section id="pipeline">
+            <div class="container">
+                <div class="row section-header">
+                    <div class="col-lg-10 col-md-12 mx-auto">
+                        <h2 class="section-title">Automated Benchmarking Pipeline</h2>
+                        <h4 class="section-subtitle">
+                            All architectures were deployed and validated through a <u>single automated pipeline</u>,
+                            ensuring <b>consistent, reproducible results</b>.
+                        </h4>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-10 col-md-12 mx-auto">
+                        <ol class="pipeline-list">
+                            <li>
+                                Automate <b class="text-success-accent">Unit testing with Pyest</b>.
+                            </li>
+                            <li>
+                                Build and upload images to <b class="text-success-accent">AWS ECR</b>.
+                            </li>
+                            <li>
+                                Provision <b class="text-success-accent"> AWS infrastructure with
+                                    Terraform</b>.
+                            </li>
+                            <li> Validate deployment with<b class="text-success-accent"> smoke tests
+                                </b>.
+                            </li>
+                            <li> Execute automated <b class="text-success-accent"> load testing</b>.
+                            </li>
+                            <li> <b class="text-success-accent"> Clean up</b> all architecture to
+                                reduce cost. </li>
+                        </ol>
+                    </div>
+
+                </div>
+
+                <!-- github action video -->
+                <div class="row">
+                    <div class="col-lg-10 col-md-12 mx-auto">
+                        <p> 🎥 Watch the <b class="text-success-accent"> GitHub Actions pipeline</b> in action 👇
+                        </p>
+                        <div class="ratio ratio-16x9 shadow rounded overflow-hidden mx-auto">
+                            <video muted controls autoplay loop preload="metadata" class="w-100">
+                                <source src="./video/github_action.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Engineering Capabilities ====================== -->
+        <section id="capabilities">
+            <div class="container">
+                <div class="row section-header">
+                    <div class="col-lg-10 col-md-12 mx-auto">
+                        <h2 class="section-title">Engineering Capabilities</h2>
+                        <p class="section-subtitle">
+                            Hands-on skills across distributed systems, performance engineering, cloud automation, and
+                            observability.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="row g-4">
+                    <!-- Distributed Systems -->
+                    <div class="col-12 col-md-6 col-lg-3">
+                        <div class="capability-card h-100 p-4">
+                            <div class="capability-icon mb-3">📐</div>
+                            <h5 class="capability-title">Distributed Systems</h5>
+                            <p class="capability-desc">
+                                Designed and benchmarked four cloud architectures with clear trade-off analysis.
+                            </p>
+                            <div class="capability-tags mt-3">
+                                <span class="tag">AWS</span>
+                                <span class="tag">Docker</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Performance Engineering -->
+                    <div class="col-12 col-md-6 col-lg-3">
+                        <div class="capability-card h-100 p-4">
+                            <div class="capability-icon mb-3">⚡</div>
+                            <h5 class="capability-title">Performance Engineering</h5>
+                            <p class="capability-desc">
+                                Measured throughput, latency, failure rates, and resource usage under controlled
+                                workloads.
+                            </p>
+                            <div class="capability-tags mt-3">
+                                <span class="tag">K6</span>
+                                <span class="tag">Grafana</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Cloud Automation -->
+                    <div class="col-12 col-md-6 col-lg-3">
+                        <div class="capability-card h-100 p-4">
+                            <div class="capability-icon mb-3">⚙️</div>
+                            <h5 class="capability-title">Cloud Automation</h5>
+                            <p class="capability-desc">
+                                Built end-to-end pipeline to manage cloud services using infrastructure as code.
+                            </p>
+                            <div class="capability-tags mt-3">
+                                <span class="tag">Terraform</span>
+                                <span class="tag">GitHub Actions</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Observability -->
+                    <div class="col-12 col-md-6 col-lg-3">
+                        <div class="capability-card h-100 p-4">
+                            <div class="capability-icon mb-3">🔎</div>
+                            <h5 class="capability-title">Observability</h5>
+                            <p class="capability-desc">
+                                Monitored scaling behavior and infrastructure metrics in real time.
+                            </p>
+                            <div class="capability-tags mt-3">
+                                <span class="tag">CloudWatch</span>
+                                <span class="tag">Grafana</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p class="float-end"><a href="#home" class="text-reset">Back to top</a></p>
+            <p><a href="https://www.arguswatcher.net" class="text-reset">Arguswatcher</a> © 2026 | Automated
+                Architecture Benchmark via EKS</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+        crossorigin="anonymous"></script>
+
+</body>
+
+</html>

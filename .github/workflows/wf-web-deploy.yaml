@@ -1,0 +1,120 @@
+name: Workflow Web Deployment
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - "app/html/**"
+      - "aws/web/**"
+      - ".github/workflows/wf-web-deploy.yaml"
+
+# read write
+permissions:
+  contents: read
+  id-token: write
+
+# multiple trigger
+concurrency:
+  group: prod-web-deploy-${{ github.workflow }}-${{ github.ref_name }}
+  cancel-in-progress: true # Cancel older runs
+
+jobs:
+  deploy_project_web:
+    name: Deploy Project Website
+    runs-on: ubuntu-latest
+    environment: Web
+    timeout-minutes: 60
+    env:
+      TF_VERSION: 1.14.0
+      TF_DIR: aws/web
+      TF_PLUGIN_CACHE_DIR: /home/runner/.terraform.d/plugin-cache
+      TF_VAR_project: ${{ vars.PROJECT }}
+      TF_VAR_env: ${{ vars.ENV }}
+      TF_VAR_aws_region: ${{ vars.AWS_REGION }}
+      TF_VAR_domain_name: ${{vars.DOMAIN_NAME}}
+      TF_VAR_cloudflare_api_token: ${{secrets.CF_API_TOKEN}}
+      TF_VAR_cloudflare_zone_id: ${{secrets.CF_ZONE_ID}}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v4
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v6
+        with:
+          role-to-assume: ${{ secrets.AWS_GITHUB_ACTION_ROLE_ARN }}
+          aws-region: ${{ env.TF_VAR_aws_region }}
+
+      - name: Configure Terraform plugin cache
+        run: |
+          mkdir -pv ${{ env.TF_PLUGIN_CACHE_DIR }}
+          echo 'plugin_cache_dir = "${{ env.TF_PLUGIN_CACHE_DIR }}"' > ~/.terraformrc
+
+      - name: Cache Terraform plugins
+        uses: actions/cache@v5
+        with:
+          path: ${{ env.TF_PLUGIN_CACHE_DIR }}
+          key: ${{ runner.os }}-terraform-${{ env.TF_VERSION }}-${{ vars.ENV }}-${{ hashFiles('aws/.terraform.lock.hcl') }}
+
+      - name: Terraform init - S3 backend
+        working-directory: ${{ env.TF_DIR }}
+        run: |
+          terraform init -reconfigure -input=false \
+            -backend-config="bucket=${{ vars.AWS_BACKEND_BUCKET }}" \
+            -backend-config="region=${{ vars.AWS_REGION }}" \
+            -backend-config="key=${{ vars.PROJECT }}/${{ vars.ENV }}/terraform.tfstate" \
+            -backend-config="encrypt=true"
+
+      - name: Deploy-Terraform Validate
+        working-directory: ${{ env.TF_DIR }}
+        run: |
+          terraform fmt -check -recursive -no-color
+          terraform validate -no-color
+
+      - name: Deploy-Terraform Plan
+        working-directory: ${{ env.TF_DIR }}
+        id: deploy-plan
+        run: terraform plan -out=tfplan -input=false -no-color
+
+      - name: Deploy-Show plan (JSON)
+        working-directory: ${{ env.TF_DIR }}
+        run: terraform show -json tfplan > tfplan.json
+
+      - name: Deploy-Save plan artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          name: "tfplan-deploy-${{ env.TF_VAR_env }}"
+          path: |
+            ${{ env.TF_DIR }}/tfplan
+            ${{ env.TF_DIR }}/tfplan.json
+          retention-days: 3
+
+      - name: Deploy-Terraform Apply
+        working-directory: ${{ env.TF_DIR }}
+        run: terraform apply -auto-approve -no-color tfplan
+
+      - name: Send Slack Notification
+        if: always()
+        uses: slackapi/slack-github-action@v2.1.1
+        with:
+          webhook: ${{ secrets.slack_webhook_url }}
+          webhook-type: incoming-webhook
+          payload: |
+            text: |
+                ${{ job.status == 'success' && '✅' || job.status == 'failure' && '❌' || '⚠️' }} *${{ github.job }}: ${{ job.status }}*
+                
+                Repo: ${{ github.repository }}
+                Branch: ${{ github.ref_name }}
+                Workflow: ${{ github.workflow }}
+                Job: ${{ github.job }}
+                Actor: ${{ github.triggering_actor }}
+                Event: ${{ github.event_name }}
+                Status: ${{ job.status }}
+
+                Run: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}

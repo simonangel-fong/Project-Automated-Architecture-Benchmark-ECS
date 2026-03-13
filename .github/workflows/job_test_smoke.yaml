@@ -1,0 +1,82 @@
+# .github/workflows/job_test_smoke.yaml
+name: Job-Smoke Testing
+
+on:
+  workflow_call:
+    inputs:
+      base_url:
+        description: "The base url"
+        required: true
+        type: string
+      env:
+        description: "Environment"
+        required: true
+        type: string
+
+jobs:
+  testing-smoke:
+    name: Smoke Testing
+    runs-on: ubuntu-latest
+    env:
+      ENV: ${{ inputs.env }}
+      BASE_URL: ${{ inputs.base_url }}
+      K6_REPORT: k6/report/${{ inputs.env }}_cicd_smoke.html
+      K6_SCRIPT: k6/script/test_smoke.js
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Wait for DNS
+        run: |
+          set -euo pipefail
+
+          echo ${{ env.BASE_URL }}
+
+          ATTEMPT=120
+          URL_STATUS=0
+
+          for i in $(seq 1 $ATTEMPT); do
+            
+            echo "[$i] Try URL: $BASE_URL ..."
+            HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" $BASE_URL/api)
+            echo
+
+            if [ "$HTTP_CODE" -eq 307 ]; then
+              URL_STATUS=1
+              break
+            fi
+            echo "[$i] Retry..."
+            sleep 1
+          done
+
+          if [ $URL_STATUS -eq 0 ]; then
+            echo "URL fail: $BASE_URL"
+            exit 0
+          else
+            echo "URL success: $BASE_URL"
+          fi
+
+      - name: Setup K6
+        uses: grafana/setup-k6-action@v1
+
+      - name: Smoke Testing
+        id: testing-smoke
+        uses: grafana/run-k6-action@v1
+        env:
+          K6_WEB_DASHBOARD: "true"
+          K6_WEB_DASHBOARD_EXPORT: "${{ env.K6_REPORT }}"
+        with:
+          debug: true
+          fail-fast: true
+          flags: --env BASE_URL=${{env.BASE_URL}}
+          path: |
+            ${{ env.K6_SCRIPT }}
+
+      - name: Upload smoke report artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: "k6-report-${{ inputs.env }}_cicd_smoke.html"
+          path: |
+            ${{ env.K6_REPORT }}
+          retention-days: 7

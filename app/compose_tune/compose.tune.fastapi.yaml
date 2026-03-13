@@ -1,0 +1,42 @@
+services:
+  fastapi01:
+    container_name: fastapi01
+    build:
+      context: ../fastapi_baseline/
+      dockerfile: Dockerfile
+    environment:
+      PROJECT: "${PROJECT:-auto-benchmark}"
+      ENV: "${ENV:-tune}"
+      DEBUG: "${DEBUG:-true}"
+      LOG_LEVEL: "${LOG_LEVEL:-DEBUG}"
+      POOL_SIZE: "${POOL_SIZE:-20}"
+      MAX_OVERFLOW: "${MAX_OVERFLOW:-10}"
+      POSTGRES__HOST: "${POSTGRES__HOST:-postgres}"
+      POSTGRES__DB: "${POSTGRES__DB:-app_db}"
+      POSTGRES__PORT: "${POSTGRES__PORT:-5432}"
+      POSTGRES__USER: "${POSTGRES__USER:-app_user}"
+      POSTGRES__PASSWORD: "${POSTGRES__PASSWORD:-test123}"
+    networks:
+      # - public_network
+      - private_network
+    ports:
+      - 8000:8000
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8000/api/health || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    depends_on:
+      postgres:
+        condition: service_healthy
+      flyway:
+        condition: service_completed_successfully
+    deploy:
+      resources:
+        limits:
+          cpus: "2"
+          memory: 512M
+        reservations:
+          cpus: "1"
+          memory: 256M

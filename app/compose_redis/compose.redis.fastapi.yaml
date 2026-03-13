@@ -1,0 +1,451 @@
+services:
+  fastapi01:
+    container_name: fastapi01
+    build:
+      context: ../fastapi_redis/
+      dockerfile: Dockerfile
+    environment:
+      APP_NAME: "${APP_NAME:-auto-benchmark}"
+      ENV: "${ENV:-redis}"
+      DEBUG: "${DEBUG:-true}"
+      LOG_LEVEL: "${LOG_LEVEL:-DEBUG}"
+      POOL_SIZE: "${POOL_SIZE:-5}"
+      MAX_OVERFLOW: "${MAX_OVERFLOW:-10}"
+      POSTGRES__HOST: "${POSTGRES__HOST:-postgres}"
+      POSTGRES__DB: "${POSTGRES__DB:-app_db}"
+      POSTGRES__PORT: "${POSTGRES__PORT:-5432}"
+      POSTGRES__USER: "${POSTGRES__USER:-app_user}"
+      POSTGRES__PASSWORD: "${POSTGRES__PASSWORD:-test123}"
+      REDIS__HOST: "${REDIS__HOST:-redis}"
+      REDIS__PORT: "${REDIS__PORT:-6379}"
+      KAFKA__HOST: "${KAFKA__HOST:-kafka_broker}"
+      KAFKA__PORT: "${KAFKA__PORT:-9092}"
+    networks:
+      # - public_network
+      - private_network
+    ports:
+      - 8000:8000
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8000/api/health || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    depends_on:
+      postgres:
+        condition: service_healthy
+      flyway:
+        condition: service_completed_successfully
+    deploy:
+      resources:
+        limits:
+          cpus: "1"
+          memory: 256M
+        reservations:
+          cpus: "1"
+          memory: 256M
+  fastapi02:
+    container_name: fastapi02
+    build:
+      context: ../fastapi_redis/
+      dockerfile: Dockerfile
+    environment:
+      APP_NAME: "${APP_NAME:-auto-benchmark}"
+      ENV: "${ENV:-redis}"
+      DEBUG: "${DEBUG:-true}"
+      LOG_LEVEL: "${LOG_LEVEL:-DEBUG}"
+      POOL_SIZE: "${POOL_SIZE:-5}"
+      MAX_OVERFLOW: "${MAX_OVERFLOW:-10}"
+      POSTGRES__HOST: "${POSTGRES__HOST:-postgres}"
+      POSTGRES__DB: "${POSTGRES__DB:-app_db}"
+      POSTGRES__PORT: "${POSTGRES__PORT:-5432}"
+      POSTGRES__USER: "${POSTGRES__USER:-app_user}"
+      POSTGRES__PASSWORD: "${POSTGRES__PASSWORD:-test123}"
+      REDIS__HOST: "${REDIS__HOST:-redis}"
+      REDIS__PORT: "${REDIS__PORT:-6379}"
+      KAFKA__HOST: "${KAFKA__HOST:-kafka_broker}"
+      KAFKA__PORT: "${KAFKA__PORT:-9092}"
+    networks:
+      # - public_network
+      - private_network
+    ports:
+      - 8000:8000
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8000/api/health || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    depends_on:
+      postgres:
+        condition: service_healthy
+      flyway:
+        condition: service_completed_successfully
+    deploy:
+      resources:
+        limits:
+          cpus: "1"
+          memory: 256M
+        reservations:
+          cpus: "1"
+          memory: 256M
+  fastapi03:
+    container_name: fastapi03
+    build:
+      context: ../fastapi_redis/
+      dockerfile: Dockerfile
+    environment:
+      APP_NAME: "${APP_NAME:-auto-benchmark}"
+      ENV: "${ENV:-redis}"
+      DEBUG: "${DEBUG:-true}"
+      LOG_LEVEL: "${LOG_LEVEL:-DEBUG}"
+      POOL_SIZE: "${POOL_SIZE:-5}"
+      MAX_OVERFLOW: "${MAX_OVERFLOW:-10}"
+      POSTGRES__HOST: "${POSTGRES__HOST:-postgres}"
+      POSTGRES__DB: "${POSTGRES__DB:-app_db}"
+      POSTGRES__PORT: "${POSTGRES__PORT:-5432}"
+      POSTGRES__USER: "${POSTGRES__USER:-app_user}"
+      POSTGRES__PASSWORD: "${POSTGRES__PASSWORD:-test123}"
+      REDIS__HOST: "${REDIS__HOST:-redis}"
+      REDIS__PORT: "${REDIS__PORT:-6379}"
+      KAFKA__HOST: "${KAFKA__HOST:-kafka_broker}"
+      KAFKA__PORT: "${KAFKA__PORT:-9092}"
+    networks:
+      # - public_network
+      - private_network
+    ports:
+      - 8000:8000
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8000/api/health || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    depends_on:
+      postgres:
+        condition: service_healthy
+      flyway:
+        condition: service_completed_successfully
+    deploy:
+      resources:
+        limits:
+          cpus: "1"
+          memory: 256M
+        reservations:
+          cpus: "1"
+          memory: 256M
+  fastapi04:
+    container_name: fastapi04
+    build:
+      context: ../fastapi_redis/
+      dockerfile: Dockerfile
+    environment:
+      APP_NAME: "${APP_NAME:-auto-benchmark}"
+      ENV: "${ENV:-redis}"
+      DEBUG: "${DEBUG:-true}"
+      LOG_LEVEL: "${LOG_LEVEL:-DEBUG}"
+      POOL_SIZE: "${POOL_SIZE:-5}"
+      MAX_OVERFLOW: "${MAX_OVERFLOW:-10}"
+      POSTGRES__HOST: "${POSTGRES__HOST:-postgres}"
+      POSTGRES__DB: "${POSTGRES__DB:-app_db}"
+      POSTGRES__PORT: "${POSTGRES__PORT:-5432}"
+      POSTGRES__USER: "${POSTGRES__USER:-app_user}"
+      POSTGRES__PASSWORD: "${POSTGRES__PASSWORD:-test123}"
+      REDIS__HOST: "${REDIS__HOST:-redis}"
+      REDIS__PORT: "${REDIS__PORT:-6379}"
+      KAFKA__HOST: "${KAFKA__HOST:-kafka_broker}"
+      KAFKA__PORT: "${KAFKA__PORT:-9092}"
+    networks:
+      # - public_network
+      - private_network
+    ports:
+      - 8000:8000
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8000/api/health || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    depends_on:
+      postgres:
+        condition: service_healthy
+      flyway:
+        condition: service_completed_successfully
+    deploy:
+      resources:
+        limits:
+          cpus: "1"
+          memory: 256M
+        reservations:
+          cpus: "1"
+          memory: 256M
+  fastapi05:
+    container_name: fastapi05
+    build:
+      context: ../fastapi_redis/
+      dockerfile: Dockerfile
+    environment:
+      APP_NAME: "${APP_NAME:-auto-benchmark}"
+      ENV: "${ENV:-redis}"
+      DEBUG: "${DEBUG:-true}"
+      LOG_LEVEL: "${LOG_LEVEL:-DEBUG}"
+      POOL_SIZE: "${POOL_SIZE:-5}"
+      MAX_OVERFLOW: "${MAX_OVERFLOW:-10}"
+      POSTGRES__HOST: "${POSTGRES__HOST:-postgres}"
+      POSTGRES__DB: "${POSTGRES__DB:-app_db}"
+      POSTGRES__PORT: "${POSTGRES__PORT:-5432}"
+      POSTGRES__USER: "${POSTGRES__USER:-app_user}"
+      POSTGRES__PASSWORD: "${POSTGRES__PASSWORD:-test123}"
+      REDIS__HOST: "${REDIS__HOST:-redis}"
+      REDIS__PORT: "${REDIS__PORT:-6379}"
+      KAFKA__HOST: "${KAFKA__HOST:-kafka_broker}"
+      KAFKA__PORT: "${KAFKA__PORT:-9092}"
+    networks:
+      # - public_network
+      - private_network
+    ports:
+      - 8000:8000
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8000/api/health || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    depends_on:
+      postgres:
+        condition: service_healthy
+      flyway:
+        condition: service_completed_successfully
+    deploy:
+      resources:
+        limits:
+          cpus: "1"
+          memory: 256M
+        reservations:
+          cpus: "1"
+          memory: 256M
+  fastapi06:
+    container_name: fastapi06
+    build:
+      context: ../fastapi_redis/
+      dockerfile: Dockerfile
+    environment:
+      APP_NAME: "${APP_NAME:-auto-benchmark}"
+      ENV: "${ENV:-redis}"
+      DEBUG: "${DEBUG:-true}"
+      LOG_LEVEL: "${LOG_LEVEL:-DEBUG}"
+      POOL_SIZE: "${POOL_SIZE:-5}"
+      MAX_OVERFLOW: "${MAX_OVERFLOW:-10}"
+      POSTGRES__HOST: "${POSTGRES__HOST:-postgres}"
+      POSTGRES__DB: "${POSTGRES__DB:-app_db}"
+      POSTGRES__PORT: "${POSTGRES__PORT:-5432}"
+      POSTGRES__USER: "${POSTGRES__USER:-app_user}"
+      POSTGRES__PASSWORD: "${POSTGRES__PASSWORD:-test123}"
+      REDIS__HOST: "${REDIS__HOST:-redis}"
+      REDIS__PORT: "${REDIS__PORT:-6379}"
+      KAFKA__HOST: "${KAFKA__HOST:-kafka_broker}"
+      KAFKA__PORT: "${KAFKA__PORT:-9092}"
+    networks:
+      # - public_network
+      - private_network
+    ports:
+      - 8000:8000
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8000/api/health || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    depends_on:
+      postgres:
+        condition: service_healthy
+      flyway:
+        condition: service_completed_successfully
+    deploy:
+      resources:
+        limits:
+          cpus: "1"
+          memory: 256M
+        reservations:
+          cpus: "1"
+          memory: 256M
+  fastapi07:
+    container_name: fastapi07
+    build:
+      context: ../fastapi_redis/
+      dockerfile: Dockerfile
+    environment:
+      APP_NAME: "${APP_NAME:-auto-benchmark}"
+      ENV: "${ENV:-redis}"
+      DEBUG: "${DEBUG:-true}"
+      LOG_LEVEL: "${LOG_LEVEL:-DEBUG}"
+      POOL_SIZE: "${POOL_SIZE:-5}"
+      MAX_OVERFLOW: "${MAX_OVERFLOW:-10}"
+      POSTGRES__HOST: "${POSTGRES__HOST:-postgres}"
+      POSTGRES__DB: "${POSTGRES__DB:-app_db}"
+      POSTGRES__PORT: "${POSTGRES__PORT:-5432}"
+      POSTGRES__USER: "${POSTGRES__USER:-app_user}"
+      POSTGRES__PASSWORD: "${POSTGRES__PASSWORD:-test123}"
+      REDIS__HOST: "${REDIS__HOST:-redis}"
+      REDIS__PORT: "${REDIS__PORT:-6379}"
+      KAFKA__HOST: "${KAFKA__HOST:-kafka_broker}"
+      KAFKA__PORT: "${KAFKA__PORT:-9092}"
+    networks:
+      # - public_network
+      - private_network
+    ports:
+      - 8000:8000
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8000/api/health || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    depends_on:
+      postgres:
+        condition: service_healthy
+      flyway:
+        condition: service_completed_successfully
+    deploy:
+      resources:
+        limits:
+          cpus: "1"
+          memory: 256M
+        reservations:
+          cpus: "1"
+          memory: 256M
+  fastapi08:
+    container_name: fastapi08
+    build:
+      context: ../fastapi_redis/
+      dockerfile: Dockerfile
+    environment:
+      APP_NAME: "${APP_NAME:-auto-benchmark}"
+      ENV: "${ENV:-redis}"
+      DEBUG: "${DEBUG:-true}"
+      LOG_LEVEL: "${LOG_LEVEL:-DEBUG}"
+      POOL_SIZE: "${POOL_SIZE:-5}"
+      MAX_OVERFLOW: "${MAX_OVERFLOW:-10}"
+      POSTGRES__HOST: "${POSTGRES__HOST:-postgres}"
+      POSTGRES__DB: "${POSTGRES__DB:-app_db}"
+      POSTGRES__PORT: "${POSTGRES__PORT:-5432}"
+      POSTGRES__USER: "${POSTGRES__USER:-app_user}"
+      POSTGRES__PASSWORD: "${POSTGRES__PASSWORD:-test123}"
+      REDIS__HOST: "${REDIS__HOST:-redis}"
+      REDIS__PORT: "${REDIS__PORT:-6379}"
+      KAFKA__HOST: "${KAFKA__HOST:-kafka_broker}"
+      KAFKA__PORT: "${KAFKA__PORT:-9092}"
+    networks:
+      # - public_network
+      - private_network
+    ports:
+      - 8000:8000
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8000/api/health || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    depends_on:
+      postgres:
+        condition: service_healthy
+      flyway:
+        condition: service_completed_successfully
+    deploy:
+      resources:
+        limits:
+          cpus: "1"
+          memory: 256M
+        reservations:
+          cpus: "1"
+          memory: 256M
+  fastapi09:
+    container_name: fastapi09
+    build:
+      context: ../fastapi_redis/
+      dockerfile: Dockerfile
+    environment:
+      APP_NAME: "${APP_NAME:-auto-benchmark}"
+      ENV: "${ENV:-redis}"
+      DEBUG: "${DEBUG:-true}"
+      LOG_LEVEL: "${LOG_LEVEL:-DEBUG}"
+      POOL_SIZE: "${POOL_SIZE:-5}"
+      MAX_OVERFLOW: "${MAX_OVERFLOW:-10}"
+      POSTGRES__HOST: "${POSTGRES__HOST:-postgres}"
+      POSTGRES__DB: "${POSTGRES__DB:-app_db}"
+      POSTGRES__PORT: "${POSTGRES__PORT:-5432}"
+      POSTGRES__USER: "${POSTGRES__USER:-app_user}"
+      POSTGRES__PASSWORD: "${POSTGRES__PASSWORD:-test123}"
+      REDIS__HOST: "${REDIS__HOST:-redis}"
+      REDIS__PORT: "${REDIS__PORT:-6379}"
+      KAFKA__HOST: "${KAFKA__HOST:-kafka_broker}"
+      KAFKA__PORT: "${KAFKA__PORT:-9092}"
+    networks:
+      # - public_network
+      - private_network
+    ports:
+      - 8000:8000
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8000/api/health || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    depends_on:
+      postgres:
+        condition: service_healthy
+      flyway:
+        condition: service_completed_successfully
+    deploy:
+      resources:
+        limits:
+          cpus: "1"
+          memory: 256M
+        reservations:
+          cpus: "1"
+          memory: 256M
+  fastapi10:
+    container_name: fastapi10
+    build:
+      context: ../fastapi_redis/
+      dockerfile: Dockerfile
+    environment:
+      APP_NAME: "${APP_NAME:-auto-benchmark}"
+      ENV: "${ENV:-redis}"
+      DEBUG: "${DEBUG:-true}"
+      LOG_LEVEL: "${LOG_LEVEL:-DEBUG}"
+      POOL_SIZE: "${POOL_SIZE:-5}"
+      MAX_OVERFLOW: "${MAX_OVERFLOW:-10}"
+      POSTGRES__HOST: "${POSTGRES__HOST:-postgres}"
+      POSTGRES__DB: "${POSTGRES__DB:-app_db}"
+      POSTGRES__PORT: "${POSTGRES__PORT:-5432}"
+      POSTGRES__USER: "${POSTGRES__USER:-app_user}"
+      POSTGRES__PASSWORD: "${POSTGRES__PASSWORD:-test123}"
+      REDIS__HOST: "${REDIS__HOST:-redis}"
+      REDIS__PORT: "${REDIS__PORT:-6379}"
+      KAFKA__HOST: "${KAFKA__HOST:-kafka_broker}"
+      KAFKA__PORT: "${KAFKA__PORT:-9092}"
+    networks:
+      # - public_network
+      - private_network
+    ports:
+      - 8000:8000
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8000/api/health || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    depends_on:
+      postgres:
+        condition: service_healthy
+      flyway:
+        condition: service_completed_successfully
+    deploy:
+      resources:
+        limits:
+          cpus: "1"
+          memory: 256M
+        reservations:
+          cpus: "1"
+          memory: 256M

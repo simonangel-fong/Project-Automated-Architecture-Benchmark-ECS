@@ -1,0 +1,44 @@
+services:
+  redis:
+    container_name: redis
+    image: redis:7
+    restart: unless-stopped
+    networks:
+      # - public_network
+      - private_network
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+
+  redis-outbox:
+    container_name: redis-outbox
+    build:
+      context: ../redis/worker
+      dockerfile: Dockerfile
+    environment:
+      APP_NAME: "${APP_NAME:-auto-benchmark}"
+      ENV: "${ENV:-kafka}"
+      DEBUG: "${DEBUG:-true}"
+      LOG_LEVEL: "${LOG_LEVEL:-DEBUG}"
+      POSTGRES__HOST: postgres
+      POSTGRES__DB: app_db
+      POSTGRES__PORT: 5432
+      POSTGRES__USER: app_user
+      POSTGRES__PASSWORD: test123
+      REDIS__HOST: "${REDIS__HOST:-redis}"
+      REDIS__PORT: "${REDIS__PORT:-6379}"
+      POLL_INTERVAL: "${POLL_INTERVAL:-1}"
+    networks:
+      - private_network
+    depends_on:
+      postgres:
+        condition: service_healthy
+      flyway:
+        condition: service_completed_successfully
+      redis:
+        condition: service_healthy

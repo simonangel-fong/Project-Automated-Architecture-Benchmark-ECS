@@ -1,0 +1,33 @@
+[
+  {
+    "name": "init-db",
+    "image": "${image}",
+
+    "cpu": 256,
+    "memory": 512,
+    "essential": true,
+
+    "environment": [
+      {
+        "name": "FLYWAY_URL",
+        "value": "jdbc:postgresql://${pghost}:${pgport}/${pgdatabase}"
+      },
+      { "name": "FLYWAY_USER",  "value": "${pguser}" },
+      { "name": "FLYWAY_PASSWORD", "value": "${pgpwd}" },
+
+      { "name": "FLYWAY_PLACEHOLDERS_APP_USER_PASSWORD",      "value": "${app_user_password}" },
+      { "name": "FLYWAY_PLACEHOLDERS_APP_READONLY_PASSWORD",  "value": "${app_readonly_password}" }
+    ],
+
+    "logConfiguration": {
+      "logDriver": "awslogs",
+      "options": {
+        "awslogs-create-group": "true",
+        "awslogs-group": "${awslogs_group}",
+        "awslogs-region": "${region}",
+        "awslogs-stream-prefix": "ecs",
+        "awslogs-datetime-format": "%Y-%m-%dT%H:%M:%S.%f%z"
+      }
+    }
+  }
+]

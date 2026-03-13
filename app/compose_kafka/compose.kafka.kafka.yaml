@@ -1,0 +1,75 @@
+volumes:
+  kafka_data:
+
+services:
+  kafka_broker:
+    container_name: kafka_broker
+    image: apache/kafka:latest
+    environment:
+      # KRaft settings
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka_broker:9093
+      # Listeners
+      KAFKA_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka_broker:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      # common settings
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_NUM_PARTITIONS: 3
+    volumes:
+      - kafka_data:/tmp/kraft-combined-logs
+    networks:
+      - private_network
+      - public_network
+    ports:
+      - "9092:9092"
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "9092"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  kafka_consumer01:
+    container_name: kafka_consumer01
+    build:
+      context: ../kafka/consumer
+      dockerfile: Dockerfile
+    environment:
+      POSTGRES__HOST: postgres
+      POSTGRES__DB: app_db
+      POSTGRES__PORT: 5432
+      POSTGRES__USER: app_user
+      POSTGRES__PASSWORD: test123
+      KAFKA__BOOTSTRAP_SERVERS: kafka_broker:9092
+    networks:
+      - private_network
+    depends_on:
+      postgres:
+        condition: service_healthy
+      kafka_broker:
+        condition: service_healthy
+  kafka_consumer02:
+    container_name: kafka_consumer02
+    build:
+      context: ../kafka/consumer
+      dockerfile: Dockerfile
+    environment:
+      POSTGRES__HOST: postgres
+      POSTGRES__DB: app_db
+      POSTGRES__PORT: 5432
+      POSTGRES__USER: app_user
+      POSTGRES__PASSWORD: test123
+      KAFKA__BOOTSTRAP_SERVERS: kafka_broker:9092
+    networks:
+      - private_network
+    depends_on:
+      postgres:
+        condition: service_healthy
+      kafka_broker:
+        condition: service_healthy

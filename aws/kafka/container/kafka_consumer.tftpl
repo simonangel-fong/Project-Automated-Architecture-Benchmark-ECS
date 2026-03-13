@@ -1,0 +1,59 @@
+[
+  {
+    "name": "kafka-consumer",
+    "image": "${image}",
+
+    "cpu": ${cpu},
+    "memory": ${memory},
+    "essential": true,
+
+    "environment": [
+      { "name": "APP_NAME", "value": "${project}" },
+      { "name": "ENV", "value": "${env}" },
+      { "name": "DEBUG", "value": "${debug}" },
+
+      { "name": "POSTGRES__HOST", "value": "${pgdb_host}" },
+      { "name": "POSTGRES__PORT", "value": "5432" },
+      { "name": "POSTGRES__DB", "value": "${pgdb_db}" },
+      { "name": "POSTGRES__USER", "value": "${pgdb_user}" },
+      { "name": "POSTGRES__PASSWORD", "value": "${pgdb_pwd}" },
+      { "name": "POOL_SIZE", "value": "${pool_size}" },
+      { "name": "MAX_OVERFLOW", "value": "${max_overflow}" },
+      
+      { "name": "AWS_REGION", "value": "${region}" },
+      { "name": "KAFKA__USE_MSK_AUTH", "value": "${use_msk_auth}" },
+      { "name": "KAFKA__BOOTSTRAP_SERVERS", "value": "${kafka_bootstrap}" },
+      { "name": "KAFKA__GROUP_ID", "value": "${kafka_group_id}" },
+      { "name": "KAFKA__TOPIC", "value": "${kafka_topic}" }
+    ],
+
+    "logConfiguration": {
+      "logDriver": "awslogs",
+      "options": {
+        "awslogs-create-group": "true",
+        "awslogs-group": "${awslogs_group}",
+        "awslogs-region": "${region}",
+        "awslogs-stream-prefix": "ecs",
+        "awslogs-datetime-format": "%Y-%m-%dT%H:%M:%S.%f%z"
+      }
+    },
+
+    "linuxParameters": {
+      "initProcessEnabled": true
+    },
+
+    "healthCheck": {
+      "command": [
+        "CMD-SHELL",
+        "python -c \"import os,sys,socket; socket.gethostbyname(os.getenv('POSTGRES__HOST','localhost')); sys.exit(0)\" || exit 1"
+      ],
+      "interval": 30,
+      "timeout": 5,
+      "retries": 3,
+      "startPeriod": 60
+    },
+
+    "stopTimeout": 90,
+    "readonlyRootFilesystem": false
+  }
+]
