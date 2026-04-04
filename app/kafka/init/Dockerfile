@@ -10,11 +10,16 @@ WORKDIR /opt
 RUN apk add --no-cache bash curl unzip
 
 # download Kafka
-RUN curl -fsSL -o kafka.tgz \
-    https://downloads.apache.org/kafka/${KAFKA_VERSION}/kafka_${SCALA_VERSION}-${KAFKA_VERSION}.tgz \
- && tar -xzf kafka.tgz \
- && mv kafka_${SCALA_VERSION}-${KAFKA_VERSION} kafka \
- && rm kafka.tgz
+# RUN curl -fsSL -o kafka.tgz \
+#     https://downloads.apache.org/kafka/${KAFKA_VERSION}/kafka_${SCALA_VERSION}-${KAFKA_VERSION}.tgz \
+#  && tar -xzf kafka.tgz \
+#  && mv kafka_${SCALA_VERSION}-${KAFKA_VERSION} kafka \
+#  && rm kafka.tgz
+
+RUN curl -fsSL -o kafka.tgz https://archive.apache.org/dist/kafka/3.6.0/kafka_2.13-3.6.0.tgz \
+    && tar -xzf kafka.tgz \
+    && mv kafka_2.13-3.6.0 kafka \
+    && rm kafka.tgz
 
 # download AWS MSK IAM auth "all" jar
 RUN curl -fsSL -o /opt/aws-msk-iam-auth.jar \
