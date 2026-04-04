@@ -44,7 +44,7 @@ locals {
 
 variable "threshold_cpu" {
   type    = number
-  default = 25
+  default = 40
 }
 
 variable "svc_param" {
