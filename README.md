@@ -58,7 +58,7 @@ Four architectures were tested in progression — Baseline, Auto-Scaling, Redis 
 | Redis        | 🟢 High             | 🟡 Medium        | 🟠 Medium        | 🟠 Medium  |
 | Kafka        | 🟢 Very High        | 🟢 Low           | 🔴 High          | 🔴 High    |
 
-<!-- [Further analysis — load profile, metric behavior, and per-design breakdown](link) -->
+- Further analysis: [Metric Analysis](./docs/metric/metric.md) | [System Design](./docs/system_design/system_design.md)
 
 ---
 
@@ -74,7 +74,7 @@ Each architecture addresses a limitation of the previous, tested under identical
 
 ![kafka](./app/html/img/diagram/kafka.gif)
 
-<!-- [Architecture deep dives — design decisions, trade-offs, and technical challenges](link) -->
+- Technical Details: [Terraform (IaC)](./docs/iac/iac.md) | [GitHub Actions Pipeline](./docs/pipeline/pipeline.md) | [SLO Metrics](./docs/slo/slo.md)
 
 ---
 
@@ -91,7 +91,10 @@ One automated workflow runs across all four designs — ensuring every benchmark
 
 ![pipeline](./docs/resource/github_action.gif)
 
-<!-- [Pipeline design decisions — why GitHub Actions, why k6, and how state is managed across steps](link) -->
+- Technical challenges
+  - [Pipeline Design](./docs/pipeline/pipeline.md)
+
+[Pipeline design decisions — why GitHub Actions, why k6, and how state is managed across steps](link)
 
 ---
 
