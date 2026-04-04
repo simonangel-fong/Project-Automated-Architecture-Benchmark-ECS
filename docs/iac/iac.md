@@ -1,8 +1,8 @@
-# Technical Challenge - Terraform (IaC)
+# Automated Architecture Benchmark (ECS) - Terraform (IaC)
 
 [Back](../../README.md)
 
-- [Technical Challenge - Terraform (IaC)](#technical-challenge---terraform-iac)
+- [Automated Architecture Benchmark (ECS) - Terraform (IaC)](#automated-architecture-benchmark-ecs---terraform-iac)
   - [Terraform (IaC)](#terraform-iac)
     - [Benefits](#benefits)
     - [State Management](#state-management)

@@ -1,8 +1,8 @@
-# Load Test Analysis — Architecture Behavior Comparison
+# Automated Architecture Benchmark (ECS) - Load Test Analysis
 
 [Back](../../README.md)
 
-- [Load Test Analysis — Architecture Behavior Comparison](#load-test-analysis--architecture-behavior-comparison)
+- [Automated Architecture Benchmark (ECS) - Load Test Analysis](#automated-architecture-benchmark-ecs---load-test-analysis)
   - [Overview](#overview)
   - [Key Results](#key-results)
   - [What the Metrics Reveal](#what-the-metrics-reveal)

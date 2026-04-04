@@ -1,8 +1,8 @@
-# Technical Details - Testing & SLO
+# Automated Architecture Benchmark (ECS) - Testing & SLO
 
 [Back](../../README.md)
 
-- [Technical Details - Testing \& SLO](#technical-details---testing--slo)
+- [Automated Architecture Benchmark (ECS) - Testing \& SLO](#automated-architecture-benchmark-ecs---testing--slo)
   - [Testing \& SLO](#testing--slo)
     - [Load Testing Tool (k6)](#load-testing-tool-k6)
     - [Traffic Pattern Design](#traffic-pattern-design)
@@ -14,9 +14,6 @@
     - [Monitoring Architecture](#monitoring-architecture)
     - [Business-Oriented](#business-oriented)
     - [Limitations of the Study](#limitations-of-the-study)
-  - [Communication Skills — Key Takeaways](#communication-skills--key-takeaways)
-
----
 
 ---
 
@@ -225,41 +222,3 @@
   - No noisy neighbors or shared resource contention
   - No network variability (multi-region, latency differences)
   - No operational events (deployments, failures, maintenance)
-
----
-
-## Communication Skills — Key Takeaways
-
-- **Translate technical metrics into business impact**
-  - Frame results in user terms (e.g., “1 in 3 users fail”)
-  - Connect system behavior to revenue, trust, and user experience
-
-- **Focus on decision-making, not just data**
-  - Present trade-offs (cost vs performance vs complexity)
-  - Recommend solutions based on workload, not “best technology”
-
-- **Tailor message to audience**
-  - Non-technical → impact, risk, user experience
-  - Engineering → metrics, bottlenecks, architecture
-  - Leadership → cost, ROI, scalability roadmap
-
-- **Use structured reasoning**
-  - Start with problem → analyze constraints → propose solution
-  - Avoid jumping to conclusions or over-engineering
-
-- **Acknowledge trade-offs and uncertainty**
-  - Be honest about limitations and assumptions
-  - Avoid overselling results
-
-- **Defend decisions with balanced perspective**
-  - Consider alternatives (e.g., Lambda vs ECS)
-  - Explain why chosen approach fits the use case
-
-- **Communicate priorities clearly**
-  - Align engineering work with business goals (SLOs, cost, reliability)
-  - Emphasize “right solution for the problem,” not complexity
-
-- **Tell a clear story**
-  - Show progression:
-    - problem → bottleneck → solution → impact
-  - Make results easy to understand and actionable

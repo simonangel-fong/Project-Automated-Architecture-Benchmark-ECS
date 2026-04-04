@@ -1,8 +1,8 @@
-# Technical Challenge - GitHub Action Pipeline
+# Automated Architecture Benchmark (ECS) - GitHub Action Pipeline
 
 [Back](../../README.md)
 
-- [Technical Challenge - GitHub Action Pipeline](#technical-challenge---github-action-pipeline)
+- [Automated Architecture Benchmark (ECS) - GitHub Action Pipeline](#automated-architecture-benchmark-ecs---github-action-pipeline)
   - [GitHub Action Pipeline](#github-action-pipeline)
     - [Benefits](#benefits)
     - [Tool Selection](#tool-selection)

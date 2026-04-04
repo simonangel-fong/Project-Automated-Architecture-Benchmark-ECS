@@ -1,8 +1,8 @@
-# Automated Architecture Benchmark - Architecture & System Design
+# Automated Architecture Benchmark (ECS) - Architecture & System Design
 
 [Back](../../README.md)
 
-- [Automated Architecture Benchmark - Architecture \& System Design](#automated-architecture-benchmark---architecture--system-design)
+- [Automated Architecture Benchmark (ECS) - Architecture \& System Design](#automated-architecture-benchmark-ecs---architecture--system-design)
   - [Architecture Comparison](#architecture-comparison)
     - [`Baseline`](#baseline)
     - [`Scale`](#scale)
