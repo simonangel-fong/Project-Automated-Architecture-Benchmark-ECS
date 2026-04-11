@@ -11,7 +11,6 @@ Welcome to visit my project website 👉 [website](https://ecs-benchmark.arguswa
   - [Results](#results)
   - [Four Designs](#four-designs)
   - [One Pipeline](#one-pipeline)
-  - [Tech Stack](#tech-stack)
 
 ---
 
@@ -21,7 +20,7 @@ Architecture advice is often theoretical — "add caching," "use a message queue
 
 **How much does each architectural decision actually move the needle under real load?**
 
-Four designs. One automated pipeline. Identical traffic conditions. Real numbers.
+> Four designs. One automated pipeline. Identical traffic conditions. Real numbers.
 
 ---
 
@@ -82,27 +81,15 @@ Each architecture addresses a limitation of the previous, tested under identical
 
 One automated workflow runs across all four designs — ensuring every benchmark is provisioned, tested, and torn down under identical conditions.
 
-| Step | Action                   | Tool             |
-| ---- | ------------------------ | ---------------- |
-| 1    | Provision infrastructure | Terraform · Helm |
-| 2    | Validate deployment      | Smoke test       |
-| 3    | Load testing             | k6               |
-| 4    | Tear down infrastructure | Terraform        |
+| Step | Action                   | Tool       |
+| ---- | ------------------------ | ---------- |
+| 1    | Automate Unit testing    | Pyest      |
+| 2    | Upload images to AWS ECR | Terraform  |
+| 3    | Provision infrastructure | Terraform  |
+| 4    | Validate deployment      | Smoke test |
+| 5    | Load testing             | k6         |
+| 6    | Tear down infrastructure | Terraform  |
 
 ![pipeline](./docs/resource/github_action.gif)
 
 [GitHub Actions Pipeline](./docs/pipeline/pipeline.md) | [Terraform (IaC)](./docs/iac/iac.md)
-
----
-
-## Tech Stack
-
-| Role               | Tools                                                |
-| ------------------ | ---------------------------------------------------- |
-| **Infrastructure** | AWS ECS · RDS · ElastiCache · MSK · Terraform · Helm |
-| **CI/CD**          | GitHub Actions · Docker                              |
-| **Load Testing**   | k6                                                   |
-| **Observability**  | Grafana · CloudWatch                                 |
-| **Backend**        | Python · FastAPI                                     |
-
----
