@@ -11,6 +11,9 @@ Welcome to visit my project website 👉 [website](https://ecs-benchmark.arguswa
   - [Results](#results)
   - [Four Designs](#four-designs)
   - [One Pipeline](#one-pipeline)
+  - [Load Test](#load-test)
+  - [Cost \& FinOps?](#cost--finops)
+  - [Debug Lessons](#debug-lessons)
 
 ---
 
@@ -53,9 +56,9 @@ Four architectures were tested in progression — Baseline, Auto-Scaling, Redis 
 | Architecture | Business Continuity | DB Overload Risk | Operational Cost | Complexity |
 | ------------ | ------------------- | ---------------- | ---------------- | ---------- |
 | Baseline     | ❌ Low              | 🔴 High          | 🟢 Low           | 🟢 Low     |
-| Scale        | 🟢 High             | 🟠 Medium–High   | 🟠 Medium        | 🟠 Medium  |
+| Scale        | 🟢 High             | 🟠 Medium–High   | 🔴 High          | 🟠 Medium  |
 | Redis        | 🟢 High             | 🟡 Medium        | 🟠 Medium        | 🟠 Medium  |
-| Kafka        | 🟢 Very High        | 🟢 Low           | 🔴 High          | 🔴 High    |
+| Kafka        | 🟢 Very High        | 🟢 Low           | 🟠 Medium        | 🔴 High    |
 
 [Metric Analysis](./docs/metric/metric.md) | [Testing & SLOs](./docs/slo/slo.md)
 
@@ -65,13 +68,17 @@ Four architectures were tested in progression — Baseline, Auto-Scaling, Redis 
 
 Each architecture addresses a limitation of the previous, tested under identical conditions.
 
-![baseline](./app/html/img/diagram/baseline.gif)
+- Baseline: Single task connected to RDS
+  ![baseline](./app/html/img/diagram/baseline.gif)
 
-![scale](./app/html/img/diagram/scale.gif)
+- Scale: Multiple tasks with autoscaling
+  ![scale](./app/html/img/diagram/scale.gif)
 
-![redis](./app/html/img/diagram/redis.gif)
+- Redis: Cache layer for read workload
+  ![redis](./app/html/img/diagram/redis.gif)
 
-![kafka](./app/html/img/diagram/kafka.gif)
+- Kafka: Event-driven layer for write workload
+  ![kafka](./app/html/img/diagram/kafka.gif)
 
 [System Design](./docs/system_design/system_design.md)
 
@@ -93,3 +100,63 @@ One automated workflow runs across all four designs — ensuring every benchmark
 ![pipeline](./docs/resource/github_action.gif)
 
 [GitHub Actions Pipeline](./docs/pipeline/pipeline.md) | [Terraform (IaC)](./docs/iac/iac.md)
+
+## Load Test
+
+Each architecture was tested under identical conditions using a mixed read/write k6 script (`1:1` ratio to expose async writes), sourced from AWS Montreal.
+
+| Phase       | Duration | Target RPS                                 |
+| ----------- | -------- | ------------------------------------------ |
+| Warm-up     | 1 min    | 0 → 50 RPS                                 |
+| Ramp-up     | 20 min   | 50 → 500 RPS (read) + 50 → 500 RPS (write) |
+| Peak / Soak | 5 min    | 1,000 RPS combined                         |
+| Cool-down   | 1 min    | 500 → 0                                    |
+
+**SLO thresholds applied during test:**
+
+- HTTP failure rate < 1%
+- p95 latency < 300ms
+
+![pic](./docs/resource/k6_dashboard.png)
+
+---
+
+## Cost & FinOps?
+
+FinOps practices applied:
+
+- ECS auto-scaling,
+- automated tear-down after every run,
+- and cost allocation tags per architecture.
+
+Infrastructure exists only during the ~27-minute test window.
+
+**Monthly equivalent (production estimate):**
+
+| Architecture | Est. Monthly | Per Benchmark Run | Cost Driver                                           |
+| ------------ | ------------ | ----------------- | ----------------------------------------------------- |
+| Baseline     | ~$145        | ~$0.09            | ALB + NAT + RDS + 1 Fargate task                      |
+| Scale        | ~$819        | ~$0.50            | 18 Fargate tasks at peak                              |
+| Redis        | ~$753        | ~$0.46            | 16 Fargate tasks + ElastiCache                        |
+| Kafka        | ~$626        | ~$0.39            | 10 Fargate tasks + ElastiCache + MSK 3-broker cluster |
+
+> - Scale is the most expensive ($819/mo) due to 18 Fargate tasks at peak — real production cost would be lower with average-based scaling.
+> - Kafka ($626/mo) is cheaper than both Scale and Redis despite the fixed MSK broker cost, because fewer Fargate tasks are needed; it also eliminates DB overload risk.
+> - Redis ($753/mo) reduces DB CPU load but carries a higher task count than Kafka without the async write benefit.
+> - Storage and ALB LCU charges excluded — see [FinOps & Cost](docs/cost.md) for full breakdown.
+
+---
+
+## Debug Lessons
+
+**Auto-scaling**
+
+- **Issue:** Tasks provisioned too slowly during traffic ramp-up, causing high failure rates before scaling could catch up
+- **Root Cause:** CPU threshold set at 60% — by the time the alarm fired, tasks were already saturated; ECS also needs ~30–60s to launch a new Fargate task, so a late trigger compounds the lag
+- **Fix:** Lowered threshold to 40% so scaling triggers earlier, giving Fargate enough lead time to provision tasks ahead of saturation
+
+**Cost Allocation Tags returned no results in Cost Explorer**
+
+- **Issue**: `Cost Explorer` returned no results when filtering by tags, even though tags were defined in `Terraform`
+- **Root Cause**: The `GitHub Actions` variable for the tag value was empty, resulting in a tag with a blank value in AWS
+- **Fix**: Validate tag values (not just keys); add workflow input checks or a Terraform validation block to fail on empty required values
