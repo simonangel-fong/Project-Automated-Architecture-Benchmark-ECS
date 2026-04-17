@@ -12,7 +12,7 @@ Welcome to visit my project website 👉 [website](https://ecs-benchmark.arguswa
   - [Four Designs](#four-designs)
   - [One Pipeline](#one-pipeline)
   - [Load Test](#load-test)
-  - [Cost \& FinOps?](#cost--finops)
+  - [Cost \& FinOps](#cost--finops)
   - [Debug Lessons](#debug-lessons)
 
 ---
@@ -121,7 +121,7 @@ Each architecture was tested under identical conditions using a mixed read/write
 
 ---
 
-## Cost & FinOps?
+## Cost & FinOps
 
 FinOps practices applied:
 
